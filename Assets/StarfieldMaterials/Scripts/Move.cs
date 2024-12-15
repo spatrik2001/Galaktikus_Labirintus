@@ -3,38 +3,18 @@ using System.Collections;
 
 public class Move : MonoBehaviour
 {
-    float Target;
-
-    public float moveSpeed = 5;
+    public float moveSpeed = 5f; // Mozgási sebesség
 
     void Update()
-	{
-        Target += Time.deltaTime / 125;
+    {
+        // Bemenet olvasása (WASD vagy Nyilak)
+        float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime; // Vízszintes mozgás (A/D)
+        float moveY = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;   // Függőleges mozgás (W/S)
 
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, Target), 0.05f);
+        // Új pozíció kiszámítása
+        Vector3 newPosition = transform.position + new Vector3(moveX, moveY, 0);
 
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.position += Vector3.right * moveSpeed * Time.deltaTime;
-
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            transform.position += Vector3.right * -moveSpeed * Time.deltaTime;
-
-        }
-
-        else if (Input.GetKey(KeyCode.W))
-        {
-            transform.position += Vector3.up * moveSpeed * Time.deltaTime;
-
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            transform.position += Vector3.up * -moveSpeed * Time.deltaTime;
-
-        }
-
+        // Az űrhajó pozíciójának frissítése
+        transform.position = newPosition;
     }
 }
