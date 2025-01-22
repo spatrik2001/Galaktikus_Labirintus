@@ -2,36 +2,55 @@
 
 public class AsteroidSpawner : MonoBehaviour
 {
-    public GameObject asteroidPrefab; // Az aszteroida prefab
-    public float spawnInterval = 1.7f;  // Időköz az aszteroidák között
-    private float timer = 0f;
+    [Header("Asteroid Prefab and Parent")]
+    public GameObject asteroidPrefab;
+    public Transform asteroidParent;
 
-    private int asteroidCount = 0;    // Összes aszteroida száma
-    private int maxAsteroids = 100;  // Maximum aszteroida
+    [Header("Spawn Settings")]
+    [SerializeField] private float initialSpawnInterval = 1.7f;  
+    [SerializeField] private float minimumSpawnInterval = 0.5f;  
+    [SerializeField] private float spawnIntervalDecrease = 0.01f; 
+
+    [Header("Spawn Area")]
+    [SerializeField] private float spawnXMin = -16f; 
+    [SerializeField] private float spawnXMax = 16f; 
+    [SerializeField] private float spawnYMin = 6f;  
+    [SerializeField] private float spawnYMax = 10f;
+
+    private float timer = 0f;
+    private float currentSpawnInterval;
+
+    public float CurrentSpawnInterval => currentSpawnInterval; 
+
+    void Start()
+    {
+        currentSpawnInterval = initialSpawnInterval; 
+    }
 
     void Update()
     {
+      
+        if (FindObjectOfType<GameUIManager>()?.IsGameRunning == false) return;
+
         timer += Time.deltaTime;
 
-        if (timer >= spawnInterval && asteroidCount < maxAsteroids)
+       
+        if (timer >= currentSpawnInterval)
         {
             SpawnAsteroid();
             timer = 0f;
-
-            // Csökkentjük az időközt, hogy egyre több aszteroida jöjjön
-            spawnInterval = Mathf.Max(0.5f, spawnInterval - 0.01f);
+            currentSpawnInterval = Mathf.Max(minimumSpawnInterval, currentSpawnInterval - spawnIntervalDecrease);
         }
     }
 
     void SpawnAsteroid()
     {
-        // Véletlenszerű x koordináta a képernyő tetején
-        float randomX = Random.Range(-16f, 16f); // -8 és 8 a képernyő szélessége
+        // Véletlenszerű X és Y koordináták a megadott tartományokon belül
+        float randomX = Random.Range(spawnXMin, spawnXMax);
+        float randomY = Random.Range(spawnYMin, spawnYMax);
+        Vector3 spawnPosition = new Vector3(randomX, randomY, 0f);
 
-        // Aszteroida létrehozása
-        Vector3 spawnPosition = new Vector3(randomX, 6f, -5); // 6 a képernyő teteje
-        Instantiate(asteroidPrefab, spawnPosition, Quaternion.identity);
-
-        asteroidCount++;
+       
+        Instantiate(asteroidPrefab, spawnPosition, Quaternion.identity, asteroidParent);
     }
 }
