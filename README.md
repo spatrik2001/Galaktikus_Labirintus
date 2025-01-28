@@ -17,4 +17,3 @@ Egy egyszerű, de káprázatos 2D játék, ami Unity-ben készült. A játék l�
 - Projekt futtatásnál célszerű mindig a legfrissebb Unity Hub verziót használni.
 
 ## Gyakori problémák
--
